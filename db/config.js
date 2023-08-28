@@ -9,7 +9,7 @@ const dbConnection = async () => {
     throw new Error("error!!!".red);
   }
 
-  console.log("DB online".bgGreen);
+  console.log("DB online".green);
 };
 
 module.exports = {
