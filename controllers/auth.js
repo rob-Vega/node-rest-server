@@ -3,6 +3,7 @@ const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
 const { generateJWT } = require("../helpers/generate-jwt");
+const { googleVerify } = require("../helpers/google-verify");
 
 const login = async (req = request, res = response) => {
   const { email, password } = req.body;
@@ -47,4 +48,39 @@ const login = async (req = request, res = response) => {
   }
 };
 
-module.exports = { login };
+const google = async (req = request, res = response) => {
+  const { id_token } = req.body;
+
+  try {
+    const { name, image, email } = await googleVerify(id_token);
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        password: "...",
+        image,
+        google: true,
+      });
+      await user.save();
+    }
+
+    if (!user.status) {
+      return res.status(401).json({
+        msg: "user blocked, please speak with administrator",
+      });
+    }
+
+    const token = await generateJWT(user.id);
+
+    res.json({ user, token });
+  } catch (error) {
+    res.status(400).json({
+      msg: "token could not verify",
+    });
+  }
+};
+
+module.exports = { login, google };

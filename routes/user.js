@@ -7,7 +7,6 @@ const {
   isAdmin,
   hasRole,
 } = require("../middlewares");
-
 const {
   isRoleValid,
   emailExist,

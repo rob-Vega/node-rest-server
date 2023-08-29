@@ -41,7 +41,7 @@ class Server {
 
   listen() {
     this.app.listen(this.port, () => {
-      console.log("app listening in port", this.port);
+      console.log(`app listening at http://localhost:${process.env.PORT}`);
     });
   }
 }
