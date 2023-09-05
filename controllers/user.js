@@ -3,7 +3,7 @@ const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
 
-const usersGet = async (req = request, res = response) => {
+const getUsers = async (req = request, res = response) => {
   const { limit = 5, from = 0 } = req.query;
   const query = { status: true };
 
@@ -17,7 +17,7 @@ const usersGet = async (req = request, res = response) => {
   res.json({ total, users });
 };
 
-const usersPost = async (req = request, res = response) => {
+const postUser = async (req = request, res = response) => {
   const { name, email, password, role } = req.body;
   const user = new User({ name, email, password, role });
 
@@ -31,7 +31,7 @@ const usersPost = async (req = request, res = response) => {
   res.status(400).json({ user });
 };
 
-const usersPut = async (req = request, res = response) => {
+const putUser = async (req = request, res = response) => {
   const { id } = req.params;
   const { _id, password, google, email, ...rest } = req.body;
 
@@ -47,11 +47,11 @@ const usersPut = async (req = request, res = response) => {
   res.status(400).json({ user });
 };
 
-const usersPatch = (req, res = response) => {
+const patchUser = (req, res = response) => {
   res.status(201).json({});
 };
 
-const usersDelete = async (req, res = response) => {
+const deleteUser = async (req, res = response) => {
   const { id } = req.params;
 
   const user = await User.findByIdAndUpdate(id, { status: false });
@@ -60,9 +60,9 @@ const usersDelete = async (req, res = response) => {
 };
 
 module.exports = {
-  usersGet,
-  usersPost,
-  usersPut,
-  usersPatch,
-  usersDelete,
+  getUsers,
+  postUser,
+  putUser,
+  patchUser,
+  deleteUser,
 };

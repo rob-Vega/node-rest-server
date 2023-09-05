@@ -1,28 +1,23 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-const {
-  validateFields,
-  validateJWT,
-  isAdmin,
-  hasRole,
-} = require("../middlewares");
+const { validateFields, validateJWT, hasRole } = require("../middlewares");
 const {
   isRoleValid,
-  emailExist,
-  userExistById,
+  emailExists,
+  userExistsById,
 } = require("../helpers/db-validators");
 const {
-  usersGet,
-  usersPost,
-  usersPut,
-  usersDelete,
-  usersPatch,
+  getUsers,
+  postUser,
+  putUser,
+  patchUser,
+  deleteUser,
 } = require("../controllers/user");
 
 const router = Router();
 
-router.get("/", usersGet);
+router.get("/", getUsers);
 
 router.post(
   "/",
@@ -30,43 +25,41 @@ router.post(
     check("name", "name is required").notEmpty(),
     check(
       "password",
-      "Password is required and must have more than 6 characters"
+      "password is required and must have more than 6 characters"
     )
       .notEmpty()
       .isLength({ min: 6 }),
-    check("email", "Email is not valid").isEmail(),
-    check("email", "Email already exist").custom(emailExist),
-    // check("role", "Role is not valid").isIn(["ADMIN_ROLE", "USER_ROLE"]),
+    check("email", "email is not valid").isEmail(),
+    check("email", "email already exist").custom(emailExists),
     check("role").custom(isRoleValid),
     validateFields,
   ],
-  usersPost
+  postUser
 );
 
 router.put(
   "/:id",
   [
     check("id", "id is not valid").isMongoId(),
-    check("id").custom(userExistById),
+    check("id").custom(userExistsById),
     check("role").custom(isRoleValid),
     validateFields,
   ],
-  usersPut
+  putUser
 );
 
-router.patch("/", usersPatch);
+router.patch("/", patchUser);
 
 router.delete(
   "/:id",
   [
     validateJWT,
-    // isAdmin,
     hasRole("ADMIN_ROLE", "SALES_ROLE"),
     check("id", "id is not valid").isMongoId(),
-    check("id").custom(userExistById),
+    check("id").custom(userExistsById),
     validateFields,
   ],
-  usersDelete
+  deleteUser
 );
 
 module.exports = router;

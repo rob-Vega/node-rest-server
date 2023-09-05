@@ -28,11 +28,10 @@ const validateJWT = async (req = request, res = response, next) => {
   } catch (error) {
     console.log(error);
 
-    res.status(401).json({
+    return res.status(401).json({
       msg: "token is not valid",
     });
   }
-  next();
 };
 
 module.exports = { validateJWT };
